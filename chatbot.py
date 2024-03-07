@@ -1,16 +1,17 @@
 from telegram import Update
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
-import configparser
+#import configparser
 import logging
 import redis
-from ChatGPT_HKBU import HKBU_ChatGPT
+from ChatGPT_HKBU import HKBU_ChatGPT
+import os
 #global redis1
 global chatgpt
 def main():
     # Load your token and create an Updater for your Bot
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    updater = Updater(token=(config['TELEGRAM']['ACCESS_TOKEN']), use_context=True)
+    #config = configparser.ConfigParser()
+    #config.read('config.ini')
+    updater = Updater(token=(os.environ['ACCESS_TOKEN']), use_context=True)
     dispatcher = updater.dispatcher
     #global redis1
     #redis1 = redis.Redis(host=(config['REDIS']['HOST']),
@@ -24,9 +25,10 @@ def main():
     #dispatcher.add_handler(echo_handler)
 
     global chatgpt
-    chatgpt = HKBU_ChatGPT(config)
+    chatgpt = HKBU_ChatGPT(os)
     chatgpt_handler = MessageHandler(Filters.text & (~Filters.command), equiped_chatgpt)
-    dispatcher.add_handler(chatgpt_handler)
+    dispatcher.add_handler(chatgpt_handler)
+
     # 注册错误处理程序
     dispatcher.add_error_handler(error_handler)
 
@@ -82,4 +84,4 @@ def error_handler(update, context):
 
 
 if __name__ == '__main__':
-    main()
+    main()
